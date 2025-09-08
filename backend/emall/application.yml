@@ -1,0 +1,23 @@
+# Resilience4j 熔断器配置
+resilience4j:
+  circuitbreaker:
+    # 实例级别配置（针对特定服务）
+    instances:
+      gateway-service:  # 网关服务专用配置
+        registerHealthIndicator: true  # 注册健康检查指标
+        slidingWindowSize: 5  # 熔断计算窗口大小（基于最近5次调用）
+        minimumNumberOfCalls: 5  # 最少需要5次调用才触发熔断计算
+        failureRateThreshold: 50  # 失败率超过50%触发熔断
+        waitDurationInOpenState: 10s  # 熔断后10秒进入半开状态
+        permittedNumberOfCallsInHalfOpenState: 3  # 半开状态下允许3次试探调用
+        eventConsumerBufferSize: 10  # 熔断事件缓冲区大小
+
+    # 默认配置模板（所有未显式配置的实例继承此配置）
+    configs:
+      default:
+        slidingWindowType: COUNT_BASED  # 基于调用次数的滑动窗口
+        slidingWindowSize: 100  # 默认窗口大小（最近100次调用）
+        minimumNumberOfCalls: 10  # 默认最少需要10次调用
+        waitDurationInOpenState: 60s  # 默认熔断后60秒恢复
+        failureRateThreshold: 50  # 默认失败率阈值50%
+        eventConsumerBufferSize: 10  # 默认事件缓冲区大小
