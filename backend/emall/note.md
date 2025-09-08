@@ -324,3 +324,43 @@ https://www.baeldung.com/spring-cloud-gateway-oauth2
 
 # Mono class
 
+# profile-service
+## used dotenv
+## @Table(name = "user-service", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "email"),
+        @UniqueConstraint(columnNames = "mobile_number")
+})
+## @JsonPropertyOrder({ "profileId", "userName", "email", "mobileNumber", "dob", "gender", "role", "password", "address" })
+##     @JsonManagedReference
+##     @JsonBackReference
+##      @NotBlank
+    @Size(min = 4, message = "Country name must be 4 characters")
+    private String country;
+
+    @NotBlank
+    @Digits(integer = 6, fraction = 0, message = "Pincode must be a 6-Digit number")
+    private String pincode;
+
+## MapStruct vs ModelMapper
+   ModelMapper 是一个常用的 Java 对象映射库，广泛用于 Spring Boot 项目中实现 DTO 与实体类之间的转换。它在社区中有较高的知名度，但近年来 MapStruct 更受欢迎，因其编译期生成代码，性能更高，类型安全性更好。
+   目前最流行的 Java Bean 映射库是 MapStruct，在 Spring Boot 和微服务架构中应用非常广泛。ModelMapper 适合简单场景，MapStruct 更适合复杂和高性能需求
+   
+## 在 Spring Security 配置中，执行顺序大致如下：
+   Bean 初始化
+   Spring 容器首先实例化并初始化所有 @Bean 方法声明的 Bean，例如 UserDetailsService、PasswordEncoder、AuthenticationProvider、JwtAuthFilter 等。
+   SecurityFilterChain 配置
+   securityFilterChain Bean 会被 Spring Security 自动检测并应用。它配置了 HTTP 安全规则，包括：
+   禁用 CSRF
+   配置请求授权（requestMatchers("/**").permitAll() 允许所有请求，anyRequest().authenticated() 需要认证）
+   设置会话管理为无状态（SessionCreationPolicy.STATELESS）
+   注册自定义认证提供者（authenticationProvider()）
+   在 UsernamePasswordAuthenticationFilter 之前添加 JWT 过滤器（addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)）
+   AuthenticationManager 初始化
+   authenticationManager Bean 通过 AuthenticationConfiguration 获取，负责处理认证请求。
+   请求处理流程
+   当有 HTTP 请求到达时，Spring Security 按照 SecurityFilterChain 的顺序依次处理：
+   先经过 JWT 认证过滤器（JwtAuthFilter）
+   再经过用户名密码认证过滤器（UsernamePasswordAuthenticationFilter）
+   认证时会调用 AuthenticationProvider，进而使用 UserDetailsService 加载用户信息，并用 PasswordEncoder 校验密码
+   总结流程：
+   Bean 初始化 → SecurityFilterChain 配置 → AuthenticationManager 初始化 → 请求进入过滤器链（先 JWT，再用户名密码认证） → 认证与授权处理

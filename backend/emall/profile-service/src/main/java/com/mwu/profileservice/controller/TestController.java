@@ -1,4 +1,4 @@
-package com.mwu.controller;
+package com.mwu.profileservice.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,4 +1,4 @@
-package com.mwu;
+package com.mwu.profileservice;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
