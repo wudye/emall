@@ -1,6 +1,7 @@
 package com.mwu.profileservice;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -8,6 +9,18 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
+@OpenAPIDefinition(
+        info = @io.swagger.v3.oas.annotations.info.Info(
+                title = "Profile Service API",
+                version = "1.0",
+                description = "API documentation for the Profile Service",
+                contact =  @io.swagger.v3.oas.annotations.info.Contact(
+                        name = "mwu",
+                        email = "none"
+                )
+
+        )
+)
 public class Application {
 
     public static void main(String[] args) {

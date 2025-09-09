@@ -37,14 +37,14 @@ resilience4j:
             failureRateThreshold: 50
             eventConsumerBufferSize: 10
 
+# application.yml
 management:
   endpoints:
     web:
       exposure:
-        include:  refresh, health, info
-  health:
-    circuitbreakers:
-      enabled: true
-    ratelimiters:
-      enabled: true
+        include: "*"  # 暴露所有 Actuator 端点
+  endpoint:
+    health:
+      show-details: always
+
 

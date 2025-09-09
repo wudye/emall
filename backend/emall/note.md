@@ -364,3 +364,185 @@ https://www.baeldung.com/spring-cloud-gateway-oauth2
    认证时会调用 AuthenticationProvider，进而使用 UserDetailsService 加载用户信息，并用 PasswordEncoder 校验密码
    总结流程：
    Bean 初始化 → SecurityFilterChain 配置 → AuthenticationManager 初始化 → 请求进入过滤器链（先 JWT，再用户名密码认证） → 认证与授权处理
+
+# image-service
+## upload image and compress image
+
+# profile service
+   config global exception handler
+
+
+
+# product-service 
+## META-INF 是 Java 标准项目结构中的一个特殊目录名称，通常用于存放元数据文件。
+   在 Spring Boot、Maven 或 Java EE 项目中，META-INF 目录下的内容不会被当作普通资源加载，而是用于描述配置、扩展点或依赖信息。例如，additional-spring-configuration-metadata.json 就是 Spring Boot 用于补充自动配置属性元数据的文件，放在 META-INF 下可以被 Spring Boot 配置处理器自动识别和读取。 
+## Product-Service/src/main/resources/META-INF/additional-spring-configuration-metadata.json 文件用于为 Spring Boot 的自动配置属性提供补充元数据说明。它可以帮助 IDE（如 IntelliJ IDEA）和 Spring Boot 配置处理器更好地识别和提示自定义配置属性。
+   在你的例子中，文件描述了 image-service.url 这个属性，包括类型（java.lang.String）和简要说明。这样，开发者在 application.properties 或 application.yml 中配置该属性时，可以获得自动补全和文档提示，提升开发体验。
+## 下面是一个详细示例，展示如何使用 additional-spring-configuration-metadata.json 文件为自定义 Spring Boot 配置属性提供元数据说明。
+假设你有一个自定义配置类 ImageServiceProperties，用于管理图片服务的相关配置
+// Java
+package com.example.productservice.config;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+@Component
+@ConfigurationProperties(prefix = "image-service")
+public class ImageServiceProperties {
+/**
+* 图片服务的基础 URL
+*/
+private String url;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+}
+  在 application.properties 文件中，你可以这样配置：
+# application.properties
+image-service.url=https://images.example.com/api
+为了让 IDE 能够识别 image-service.url 属性并提供自动补全和文档提示，你可以在 Product-Service/src/main/resources/META-INF/additional-spring-configuration-metadata.json 文件中添加如下内容：
+[
+{
+"name": "image-service.url",
+"type": "java.lang.String",
+"description": "图片服务的基础 URL，用于远程访问图片相关接口"
+}
+]
+这样，开发者在配置 image-service.url 时，IDE 会自动显示类型和描述信息，提升开发体验。
+
+# jpa already provided the page and sort crud work with querydsl?
+Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
+: Sort.by(sortBy).descending();
+Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+Specification<Products> spec = Specification.where(null);
+
+        if(keyword != null && !keyword.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("productName")), "%" +  keyword.toLowerCase() + "%"));
+        }
+        if(category != null && !category.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("category").get("categoryName"), category));
+        }
+
+        Page<Products> pageProducts = prodRepo.findAll(spec, pageDetails);
+
+        List<Products> products = pageProducts.getContent();
+        List<ProductDTO> productsDto = products.stream()
+                .map(this::mapToDTO) // Use mapToDTO for consistent image URL handling
+                .toList();
+
+
+# cart service
+你可以同时支持第三方登录（Google、GitHub）和 JWT 本地账号登录。核心思路是：
+配置 OAuth2 客户端用于第三方登录。
+配置 JWT 资源服务器用于本地令牌认证。
+前端页面提供本地登录和第三方登录入口。
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-oauth2-client</artifactId>
+</dependency>
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+</dependency>
+<dependency>
+<groupId>io.jsonwebtoken</groupId>
+<artifactId>jjwt-api</artifactId>
+<version>0.11.5</version>
+</dependency>
+<dependency>
+<groupId>io.jsonwebtoken</groupId>
+<artifactId>jjwt-impl</artifactId>
+<version>0.11.5</version>
+<scope>runtime</scope>
+</dependency>
+<dependency>
+<groupId>io.jsonwebtoken</groupId>
+<artifactId>jjwt-jackson</artifactId>
+<version>0.11.5</version>
+<scope>runtime</scope>
+</dependency>
+spring.security.oauth2.client.registration.google.client-id=你的GoogleClientId
+spring.security.oauth2.client.registration.google.client-secret=你的GoogleClientSecret
+spring.security.oauth2.client.registration.github.client-id=你的GithubClientId
+spring.security.oauth2.client.registration.github.client-secret=你的GithubClientSecret
+spring.security.oauth2.client.registration.google.scope=openid,profile,email
+spring.security.oauth2.client.registration.github.scope=user:email
+
+jwt.secret-key=你的Base64密钥
+
+2. 配置第三方登录和 JWT 密钥（application.properties）：
+   spring.security.oauth2.client.registration.google.client-id=你的GoogleClientId
+   spring.security.oauth2.client.registration.google.client-secret=你的GoogleClientSecret
+   spring.security.oauth2.client.registration.github.client-id=你的GithubClientId
+   spring.security.oauth2.client.registration.github.client-secret=你的GithubClientSecret
+   spring.security.oauth2.client.registration.google.scope=openid,profile,email
+   spring.security.oauth2.client.registration.github.scope=user:email
+
+jwt.secret-key=你的Base64密钥
+3. 安全配置类（SecurityConfig.java）：
+   @Configuration
+   @EnableWebSecurity
+   public class SecurityConfig {
+
+   @Value("${jwt.secret-key}")
+   private String secretKey;
+
+   @Bean
+   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+   http
+   .csrf(csrf -> csrf.disable())
+   .authorizeHttpRequests(auth -> auth
+   .antMatchers("/login", "/oauth2/**").permitAll() // 本地登录和第三方登录入口放行
+   .anyRequest().authenticated()
+   )
+   .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+   .oauth2Login(Customizer.withDefaults()) // 第三方登录
+   .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())); // JWT认证 for self-managed accounts
+   return http.build();
+   }
+
+   @Bean
+   public JwtDecoder jwtDecoder() {
+   byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+   SecretKey key = Keys.hmacShaKeyFor(keyBytes);
+   return NimbusJwtDecoder.withSecretKey(key).build();
+   }
+   }
+4. 本地登录接口（AuthController.java）
+   @RestController
+   public class AuthController {
+   @Value("${jwt.secret-key}")
+   private String secretKey;
+
+   @PostMapping("/login")
+   public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+   // 校验用户名和密码
+   // ...
+   String jwt = Jwts.builder()
+   .setSubject(request.getUsername())
+   .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)), SignatureAlgorithm.HS256)
+   .compact();
+   return ResponseEntity.ok(new JwtResponse(jwt));
+   }
+   }
+5. 前端页面示例：
+<form method="POST" action="/login">
+  <input name="username" type="text" />
+  <input name="password" type="password" />
+  <button type="submit">本地登录</button>
+</form>
+<button onclick="window.location.href='/oauth2/authorization/google'">Google 登录</button>
+<button onclick="window.location.href='/oauth2/authorization/github'">GitHub 登录</button>
+6. 这样即可同时支持本地账号 JWT 登录和第三方账号 OAuth2 登录。
+

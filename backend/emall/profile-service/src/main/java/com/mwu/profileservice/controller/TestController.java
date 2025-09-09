@@ -3,7 +3,7 @@ package com.mwu.profileservice.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/gatewaytest")
+@RequestMapping("/eshoppingzone/user-service")
 @RestController
 public class TestController {
 

@@ -89,11 +89,19 @@ public class SecurityConfig {
 
 
                         .pathMatchers(HttpMethod.GET, "gatewaytest/**").permitAll()
+                        .pathMatchers("/" +
+                                "actuator/**").permitAll() // 放行 Actuator 端点
 
 
                         .anyExchange().authenticated()
                 )
                 .addFilterAt(filter, SecurityWebFiltersOrder.AUTHENTICATION)
+
+ //               .anyExchange().authenticated() 表示所有未被前面 .pathMatchers(...).permitAll() 放行的请求，都需要认证（即需要 JWT 令牌）。
+//        如果请求没有令牌或令牌无效，网关会拒绝访问或重定向到登录（前端需处理）。
+//        登录时，用户名和密码会被转发到 user-service，由 user-service 校验并生成 JWT。
+//        认证流程会经过你配置的 JwtAuthenticationFilter（通过 .addFilterAt(filter, SecurityWebFiltersOrder.AUTHENTICATION)），用于校验 JWT。
+
                 .build();
 
     }

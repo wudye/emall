@@ -56,6 +56,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated())
+
+                // 所有请求都 permitAll，安全链和认证相关的配置都不会生效。 can delete
                 .sessionManagement(session -> session.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
